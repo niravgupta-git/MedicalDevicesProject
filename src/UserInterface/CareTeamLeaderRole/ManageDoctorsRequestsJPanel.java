@@ -1,0 +1,683 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package UserInterface.CareTeamLeaderRole;
+
+import Business.EcoSystem;
+import Business.Enterprise.Enterprise;
+import Business.Enterprise.WarehouseEnterprise;
+import Business.Network.Network;
+import Business.Organization.CareTeamOrganization;
+import Business.Organization.Organization;
+import Business.Organization.WarehouseOrganization;
+import Business.Schedule.DeviceBookingHistory;
+import Business.Supplier.MedicalDevice;
+import Business.UserAccount.UserAccount;
+import Business.WorkQueue.GetDeviceFromOtherEnterpriseRequest;
+import Business.WorkQueue.SurgeryOperationWorkRequest;
+import Business.WorkQueue.WorkRequest;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+/**
+ *
+ * @author nirav gupta
+ */
+public class ManageDoctorsRequestsJPanel extends javax.swing.JPanel {
+
+    /**
+     * Creates new form ManageDoctorsRequestsJPanel
+     */
+    JPanel userProcessContainer; UserAccount account; EcoSystem system;
+    Enterprise enterprise; Organization organization;
+    
+    public ManageDoctorsRequestsJPanel(JPanel userProcessContainer, UserAccount account, Enterprise enterprise, Organization organization, EcoSystem system) {
+        initComponents();
+        this.userProcessContainer=userProcessContainer;
+        this.account=account;
+        this.system=system;
+        this.enterprise=enterprise;
+        this.organization=organization;
+        populateRequestTable();
+        populateDeviceTable();
+        
+    }
+
+    
+
+    
+    public void populateRequestTable(){
+            DefaultTableModel model = (DefaultTableModel) workRequestJTable.getModel();
+            model.setRowCount(0);
+            
+            
+
+
+                        for (Organization org : enterprise.getOrganizationDirectory().getOrganizationList()) {
+                            if (org instanceof CareTeamOrganization) {
+                                for (WorkRequest request : org.getWorkQueue().getWorkRequestList()) {
+                                    Object[] row = new Object[9];
+                                    row[0] = request;
+                                    row[1] = request.getReceiver();
+                                    row[2] = request.getRequestDate();
+                                    row[3] = ((SurgeryOperationWorkRequest) request).getOperationDate();
+                                    row[4] = ((SurgeryOperationWorkRequest) request).getRequiredMedicalDeviceType();
+                                    row[5] = ((SurgeryOperationWorkRequest) request).getAssignedMedicalDeviceType();
+                                    row[6] = ((SurgeryOperationWorkRequest) request).getRequiredCareTeamSize();
+                                    row[7] = ((SurgeryOperationWorkRequest) request).getAssignedTeamSize();
+                                    row[8] =  request.getStatus();
+                                    model.addRow(row);
+                                    
+                                }
+                            }
+                        }
+                   
+                        
+        }
+
+
+    public void populateDeviceTable(){
+       
+    DefaultTableModel dtm = (DefaultTableModel) devicejTable1.getModel();
+    dtm.setRowCount(0);
+        
+
+                    for (Organization org : enterprise.getOrganizationDirectory().getOrganizationList()) {
+                        if (org instanceof CareTeamOrganization){
+                            CareTeamOrganization ctOrg = (CareTeamOrganization) org;
+                            for (MedicalDevice md : ctOrg.getMedicalDeviceCatalog().getProductCatalog()) {
+                                Object[] row = new Object[8];
+                                row[0] = md;
+                                row[1] = md.getDeviceType();
+                                row[2] = md.getDeviceID();
+                                row[3] = md.getCurrentLocation();
+                                row[4] = md.getAvailability();
+                                row[5] = md.getDeviceStatus();
+                                row[6] = md.getNextScheduledBookingDate();
+                                row[7] = md.getNextScheduledBookingTillDate();
+                                dtm.addRow(row);
+                            }
+                        }
+                    }
+    }
+    
+    
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jScrollPane1 = new javax.swing.JScrollPane();
+        workRequestJTable = new javax.swing.JTable(){
+            DefaultTableCellRenderer cellRenderer_l = new DefaultTableCellRenderer() {
+                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                    // delegate the rendering part to the default renderer (am i right ???)
+                    Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                    String s =  table.getModel().getValueAt(row,6).toString();
+
+                    if(s.isEmpty())
+                    {
+                        comp.setForeground(Color.red);
+                    }
+                    else
+                    {
+                        comp.setForeground(Color.BLUE);
+                    }
+
+                    return comp;
+                }
+            };
+        };
+        jLabel1 = new javax.swing.JLabel();
+        assignToMejButton1 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        devicejTable1 = new javax.swing.JTable();
+        assignDevicejButton1 = new javax.swing.JButton();
+        refreshjButton1 = new javax.swing.JButton();
+        backJButton = new javax.swing.JButton();
+        requestDeviceFromWarehousejButton1 = new javax.swing.JButton();
+        viewRequestedDeviceStatusjButton1 = new javax.swing.JButton();
+        resolveDoctorsReqjButton1 = new javax.swing.JButton();
+        bookingTillDatejDateChooser1 = new com.toedter.calendar.JDateChooser();
+        jLabel2 = new javax.swing.JLabel();
+
+        workRequestJTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Message", "Receiver", "Request Date", "Operation Date", "Requested Device Type", "Assigned Device", "Requested Team Size", "Assigned Team Size", "Status"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(workRequestJTable);
+        if (workRequestJTable.getColumnModel().getColumnCount() > 0) {
+            workRequestJTable.getColumnModel().getColumn(0).setResizable(false);
+            workRequestJTable.getColumnModel().getColumn(1).setResizable(false);
+            workRequestJTable.getColumnModel().getColumn(2).setResizable(false);
+            workRequestJTable.getColumnModel().getColumn(3).setResizable(false);
+            workRequestJTable.getColumnModel().getColumn(4).setResizable(false);
+            workRequestJTable.getColumnModel().getColumn(5).setResizable(false);
+            workRequestJTable.getColumnModel().getColumn(6).setResizable(false);
+            workRequestJTable.getColumnModel().getColumn(7).setResizable(false);
+            workRequestJTable.getColumnModel().getColumn(8).setResizable(false);
+        }
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel1.setText("MANAGE DOCTORS REQUESTS");
+
+        assignToMejButton1.setBackground(new java.awt.Color(0, 204, 204));
+        assignToMejButton1.setText("Assign to me");
+        assignToMejButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                assignToMejButton1ActionPerformed(evt);
+            }
+        });
+
+        devicejTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Device Name", "Type", "ID", "Location", "Availability", "Status", "Next Scheduled Date", "Booked Till Date"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, true, true, true, true, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(devicejTable1);
+        if (devicejTable1.getColumnModel().getColumnCount() > 0) {
+            devicejTable1.getColumnModel().getColumn(0).setResizable(false);
+            devicejTable1.getColumnModel().getColumn(1).setResizable(false);
+            devicejTable1.getColumnModel().getColumn(3).setResizable(false);
+            devicejTable1.getColumnModel().getColumn(4).setResizable(false);
+        }
+
+        assignDevicejButton1.setBackground(new java.awt.Color(0, 204, 204));
+        assignDevicejButton1.setText("Assign Device for Operation");
+        assignDevicejButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                assignDevicejButton1ActionPerformed(evt);
+            }
+        });
+
+        refreshjButton1.setText("Refresh");
+        refreshjButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshjButton1ActionPerformed(evt);
+            }
+        });
+
+        backJButton.setText("<< Back");
+        backJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backJButtonActionPerformed(evt);
+            }
+        });
+
+        requestDeviceFromWarehousejButton1.setBackground(new java.awt.Color(0, 204, 204));
+        requestDeviceFromWarehousejButton1.setText("Request Device from Warehouse");
+        requestDeviceFromWarehousejButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                requestDeviceFromWarehousejButton1ActionPerformed(evt);
+            }
+        });
+
+        viewRequestedDeviceStatusjButton1.setBackground(new java.awt.Color(0, 204, 204));
+        viewRequestedDeviceStatusjButton1.setText("View Requested Device status >>");
+        viewRequestedDeviceStatusjButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewRequestedDeviceStatusjButton1ActionPerformed(evt);
+            }
+        });
+
+        resolveDoctorsReqjButton1.setBackground(new java.awt.Color(204, 204, 0));
+        resolveDoctorsReqjButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        resolveDoctorsReqjButton1.setText("Resolve Doctor's Request");
+        resolveDoctorsReqjButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resolveDoctorsReqjButton1ActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Booking Till date:");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(360, 360, 360)
+                .addComponent(refreshjButton1)
+                .addGap(63, 63, 63))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(backJButton)
+                                .addGap(63, 63, 63)
+                                .addComponent(requestDeviceFromWarehousejButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(viewRequestedDeviceStatusjButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                                .addGap(128, 128, 128)
+                                .addComponent(resolveDoctorsReqjButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(83, 83, 83)
+                        .addComponent(assignToMejButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(assignDevicejButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(65, 65, 65)
+                        .addComponent(jLabel2)
+                        .addGap(31, 31, 31)
+                        .addComponent(bookingTillDatejDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(256, 256, 256))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(34, 34, 34)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 949, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(refreshjButton1))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(assignToMejButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(assignDevicejButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(36, 36, 36)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(requestDeviceFromWarehousejButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(backJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(viewRequestedDeviceStatusjButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(resolveDoctorsReqjButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(40, 40, 40))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(bookingTillDatejDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void refreshjButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshjButton1ActionPerformed
+        populateRequestTable();
+        populateDeviceTable();
+       
+    }//GEN-LAST:event_refreshjButton1ActionPerformed
+
+    private void assignDevicejButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignDevicejButton1ActionPerformed
+        int selectedRequest = workRequestJTable.getSelectedRow();
+        int selectedDevice = devicejTable1.getSelectedRow();
+        
+        if (selectedRequest < 0 || selectedDevice < 0){
+            JOptionPane.showMessageDialog(null, "Please select row from both Request and Device table ");
+            return;
+        }
+        
+        Date date = new Date();
+        WorkRequest request = (WorkRequest)workRequestJTable.getValueAt(selectedRequest, 0);
+        MedicalDevice device = (MedicalDevice) devicejTable1.getValueAt(selectedDevice, 0);
+        SurgeryOperationWorkRequest surRequest = (SurgeryOperationWorkRequest) request;
+        
+        if (request.getStatus().equalsIgnoreCase("Resolved")){
+            JOptionPane.showMessageDialog(null, "Error: Request already resolved");
+            return;
+        }
+        
+        if (request.getReceiver() == null){
+            JOptionPane.showMessageDialog(null, "Please assign the request to yourself !!! ");
+            return;
+        }
+        
+        if (surRequest.getAssignedMedicalDevice()!=null){
+           JOptionPane.showMessageDialog(null, "Device already assigned!! ");
+            return; 
+        }
+        
+        if (bookingTillDatejDateChooser1.getDate() == null){
+            JOptionPane.showMessageDialog(null, "Please enter a booked till date");
+            return;
+        }
+        
+        if (bookingTillDatejDateChooser1.getDate().before(date)){
+            JOptionPane.showMessageDialog(null, "Booking till date cannot be before current date ");
+            return;
+        }
+
+        if (bookingTillDatejDateChooser1.getDate().before(((SurgeryOperationWorkRequest) request).getOperationDate())){
+            JOptionPane.showMessageDialog(null, "Booking till date cannot be before operation date ");
+            return;
+        }
+        
+        if (!((SurgeryOperationWorkRequest) request).getRequiredMedicalDeviceType().equalsIgnoreCase(device.getDeviceType())){
+            JOptionPane.showMessageDialog(null, "Wrong device type selected for the request ");
+            return;
+        }
+        
+        //checking if maintenance date is in next 10 days
+        Date date2 = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date2);
+        cal.set(Calendar.DATE, Calendar.DATE + 10);
+        date2 = cal.getTime();
+        if (date2.compareTo(device.getNextMaitainenceDueDate()) > 0) {
+           JOptionPane.showMessageDialog(null, "Device cannot be booked 10 days before maintenance date!!");
+            return; 
+        }
+        
+        //setting device booking history
+        device.createNewDeviceBookingHistoryArraylist();
+        
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd");
+        SimpleDateFormat month2 = new SimpleDateFormat("MM");
+        
+        
+        //checking if device maintenance date is within next 10 days
+        int deviceMaintenanceDay = (Integer.valueOf(dateFormat2.format(device.getNextMaitainenceDueDate())));
+        int todaysDay = (Integer.valueOf(dateFormat2.format(date)));
+        int diff =deviceMaintenanceDay - todaysDay;
+        if (diff <= 10 || diff <= -10){
+                JOptionPane.showMessageDialog(null, "Cannot allot device as next Maintenance date is less than 10 days");
+                return;
+            }
+        
+        int x = ((SurgeryOperationWorkRequest) request).getOperationDate().compareTo(device.getNextMaitainenceDueDate());
+            if (x==0){
+                JOptionPane.showMessageDialog(null, "Cannot book !! Device maintenance date is same as operation date !!!##");
+                return;
+            }
+        
+        //checking if the device is already booked for the requested duration or requested operation/booked till date
+         
+        for (DeviceBookingHistory dbh : device.getBookingHistorylist()){
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String operationDate = sdf.format(((SurgeryOperationWorkRequest) request).getOperationDate());
+            String currentTillDate = sdf.format(bookingTillDatejDateChooser1.getDate());
+            String prevBookedDate = sdf.format(dbh.getPreviousScheduledBookingDate());
+            String prevbookedTillDate = sdf.format(dbh.getPreviousScheduledBookingTillDate());
+            
+            int operationDay = (Integer.valueOf( dateFormat2.format(((SurgeryOperationWorkRequest) request).getOperationDate())));
+            int currentTillDay = (Integer.valueOf( dateFormat2.format(bookingTillDatejDateChooser1.getDate())));
+            int previousScheduleDay = (Integer.valueOf( dateFormat2.format(dbh.getPreviousScheduledBookingDate())));
+            int previousTillDay = (Integer.valueOf( dateFormat2.format(dbh.getPreviousScheduledBookingTillDate())));
+            
+            
+            
+            int operationMonth = (Integer.valueOf( month2.format(((SurgeryOperationWorkRequest) request).getOperationDate())));
+            int currentTillMonth = (Integer.valueOf( month2.format(bookingTillDatejDateChooser1.getDate())));
+            int previousScheduleMonth = (Integer.valueOf( month2.format(dbh.getPreviousScheduledBookingDate())));
+            int previousTillMonth = (Integer.valueOf( month2.format(dbh.getPreviousScheduledBookingTillDate())));
+            int deviceMaintenanceMonth = (Integer.valueOf(month2.format(device.getNextMaitainenceDueDate())));
+            int todaysMonth = (Integer.valueOf(month2.format(date)));
+            
+            
+            
+            
+            if (currentTillDay == todaysDay){
+                JOptionPane.showMessageDialog(null, "Booked till day cannot be todays date");
+                return;
+            }
+            
+            if (operationDate.equalsIgnoreCase(prevBookedDate)){
+                JOptionPane.showMessageDialog(null, "same operation date");
+                return;
+            }
+            
+            if (operationDate.equalsIgnoreCase(prevbookedTillDate)){
+                JOptionPane.showMessageDialog(null, "operation date = booked till date");
+                return;
+            }
+
+            if (currentTillDate.equalsIgnoreCase(prevBookedDate)){
+                JOptionPane.showMessageDialog(null, "current till date = booked till date");
+                return;
+            }
+           
+            if (currentTillDate.equalsIgnoreCase(prevbookedTillDate)){
+                JOptionPane.showMessageDialog(null, "current till date = booked till date");
+                return;
+            }
+            
+            if (operationMonth == previousScheduleMonth && currentTillMonth != previousTillMonth) {
+                if (operationDay >= previousScheduleDay && operationDay <= previousTillDay) {
+                    JOptionPane.showMessageDialog(null, "current operation date is between prev booked & booked till date");
+                    return;
+                }
+            }
+            
+            if (operationMonth != previousScheduleMonth && currentTillMonth == previousTillMonth) {
+                if (currentTillDay >= previousScheduleDay && currentTillDay <= previousTillDay) {
+                    JOptionPane.showMessageDialog(null, "current till date is between prev booked & booked till date");
+                    return;
+                }
+            }
+            
+            if (operationMonth == previousScheduleMonth && currentTillMonth == previousTillMonth) {
+
+                if (operationDay >= previousScheduleDay && operationDay <= previousTillDay) {
+                    JOptionPane.showMessageDialog(null, "current operation date is between prev booked & booked till date");
+                    return;
+                }
+
+                if (currentTillDay >= previousScheduleDay && currentTillDay <= previousTillDay) {
+                    JOptionPane.showMessageDialog(null, "current till date is between prev booked & booked till date");
+                    return;
+                }
+
+                if (operationDay >= previousScheduleDay && currentTillDay <= previousTillDay) {
+                    JOptionPane.showMessageDialog(null, "current operation date & till date in between prev booked & booked till date");
+                    return;
+                }
+
+            }
+            
+        }
+
+        surRequest.setAssignedMedicalDeviceType(device.getDeviceType());
+        surRequest.setAssignedMedicalDevice(device);
+        
+        if (device.getNextScheduledBookingDate()==null && device.getNextScheduledBookingTillDate()==null){
+        device.setNextScheduledBookingDate(surRequest.getOperationDate());
+        device.setNextScheduledBookingTillDate(bookingTillDatejDateChooser1.getDate());
+        }
+        
+        device.setDeviceStatus(MedicalDevice.devicebookedStatusType.PREBOOKED.getValue());
+        
+        device.setDeviceUsageCount(device.getDeviceUsageCount()+1);
+        
+        //adding device booking history item
+        device.addStartEndDateinBookingHistory(surRequest.getOperationDate(), bookingTillDatejDateChooser1.getDate(), enterprise.getName());
+        
+        JOptionPane.showMessageDialog(null,"Device Assigned for opearation");
+        
+        populateRequestTable();
+        populateDeviceTable();
+    }//GEN-LAST:event_assignDevicejButton1ActionPerformed
+
+    private void assignToMejButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignToMejButton1ActionPerformed
+        int selectedRow = workRequestJTable.getSelectedRow();
+        
+        if (selectedRow < 0){
+            JOptionPane.showMessageDialog(null, "Please select row from Request table to assign yourself");
+            return;
+        }
+        
+        WorkRequest request = (WorkRequest)workRequestJTable.getValueAt(selectedRow, 0);
+        
+        if (request.getReceiver()!=null){
+            JOptionPane.showMessageDialog(null, "Error: Request already assigned");
+            return;
+        }
+        
+        if (request.getStatus().equalsIgnoreCase("Resolved")){
+            JOptionPane.showMessageDialog(null, "Error: Request already resolved");
+            return;
+        }
+        
+        request.setReceiver(account);
+        request.setStatus("Assigned");
+
+        populateRequestTable();
+    }//GEN-LAST:event_assignToMejButton1ActionPerformed
+
+    private void backJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backJButtonActionPerformed
+
+        userProcessContainer.remove(this);
+        CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+        layout.previous(userProcessContainer);
+    }//GEN-LAST:event_backJButtonActionPerformed
+
+    private void requestDeviceFromWarehousejButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_requestDeviceFromWarehousejButton1ActionPerformed
+        
+        int selectedRequest3 = workRequestJTable.getSelectedRow();
+        
+        if (selectedRequest3 < 0 ){
+            JOptionPane.showMessageDialog(null, "Please select row from Request table for getting device ");
+            return;
+        }
+        
+        WorkRequest request = (WorkRequest)workRequestJTable.getValueAt(selectedRequest3, 0);
+        
+        if (request.getStatus().equalsIgnoreCase("Resolved")){
+            JOptionPane.showMessageDialog(null, "Error: Request already resolved");
+            return;
+        }
+        
+                
+        if (((SurgeryOperationWorkRequest) request).getAssignedMedicalDevice()!=null){
+            JOptionPane.showMessageDialog(null, "Error: Request already has device assigned");
+            return;
+        }      
+        
+        GetDeviceFromOtherEnterpriseRequest getDeviceReq = new GetDeviceFromOtherEnterpriseRequest();
+       
+        
+        getDeviceReq.setRequiredMedicalDeviceType(((SurgeryOperationWorkRequest) request).getRequiredMedicalDeviceType());
+        getDeviceReq.setMessage(request.getMessage());
+        Date date = new Date();
+        getDeviceReq.setRequestDate(date);
+        getDeviceReq.setSender(account);
+        getDeviceReq.setStatus("SENT");
+        getDeviceReq.setDeviceRequiredOnDate(((SurgeryOperationWorkRequest) request).getOperationDate());
+        getDeviceReq.setDeviceRequiredAtHospital(enterprise.getName());
+        getDeviceReq.setDeviceShippingStatus("UnShipped");
+        
+        for (Network n : system.getNetworkList()) {
+            for (Enterprise e : n.getEnterpriseDirectory().getEnterpriseList()) {
+                if (e instanceof WarehouseEnterprise) {
+                    for (Organization org : e.getOrganizationDirectory().getOrganizationList()) {
+                        if (org instanceof WarehouseOrganization){
+                            org.getWorkQueue().getWorkRequestList().add(getDeviceReq);
+                            account.getWorkQueue().getWorkRequestList().add(getDeviceReq);
+                            JOptionPane.showMessageDialog(null,"Device Requested from Warehouse");
+                        }
+                    }
+                }
+            }
+        }
+        
+    }//GEN-LAST:event_requestDeviceFromWarehousejButton1ActionPerformed
+
+    private void viewRequestedDeviceStatusjButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewRequestedDeviceStatusjButton1ActionPerformed
+        ManageDeviceShiftRequestJPanel mpcjp = new ManageDeviceShiftRequestJPanel(userProcessContainer, account,enterprise,organization, system);
+        userProcessContainer.add("ManageProductCatalogJPanel",mpcjp);
+        CardLayout layout = (CardLayout)userProcessContainer.getLayout();
+        layout.next(userProcessContainer);
+    }//GEN-LAST:event_viewRequestedDeviceStatusjButton1ActionPerformed
+
+    private void resolveDoctorsReqjButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resolveDoctorsReqjButton1ActionPerformed
+       int selectedRequest3 = workRequestJTable.getSelectedRow();
+        
+        if (selectedRequest3 < 0 ){
+            JOptionPane.showMessageDialog(null, "Please select row from both Request table to resolve");
+            return;
+        }
+        
+        WorkRequest request = (WorkRequest)workRequestJTable.getValueAt(selectedRequest3, 0);
+        
+        if (request.getStatus().equalsIgnoreCase("Resolved")){
+            JOptionPane.showMessageDialog(null, "Error: Request already resolved");
+            return;
+        }
+        
+        if (((SurgeryOperationWorkRequest) request).getAssignedMedicalDevice() == null || 
+                ((SurgeryOperationWorkRequest) request).getAllotedOperatingRoom() == null || 
+                ((SurgeryOperationWorkRequest) request).getRequiredCareTeamSize() != 0){
+           
+            int reply = JOptionPane.showConfirmDialog(null,"The request is not assigned all requested device, room and Staff, Still resolve???", "RESOLVE REQUEST", JOptionPane.YES_NO_OPTION);
+            if (reply == JOptionPane.YES_OPTION){
+                request.setStatus("Resolved");
+            }else{
+                return;
+            }
+        }
+        else if (((SurgeryOperationWorkRequest) request).getAssignedMedicalDevice() == null || 
+                ((SurgeryOperationWorkRequest) request).getAllotedOperatingRoom() == null || 
+                ((SurgeryOperationWorkRequest) request).getRequiredCareTeamSize() == 0) {
+            JOptionPane.showMessageDialog(null, "This request is resolved!");
+        }
+        request.setStatus("Resolved");
+        request.setMessage("Infra provided");
+    }//GEN-LAST:event_resolveDoctorsReqjButton1ActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton assignDevicejButton1;
+    private javax.swing.JButton assignToMejButton1;
+    private javax.swing.JButton backJButton;
+    private com.toedter.calendar.JDateChooser bookingTillDatejDateChooser1;
+    private javax.swing.JTable devicejTable1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton refreshjButton1;
+    private javax.swing.JButton requestDeviceFromWarehousejButton1;
+    private javax.swing.JButton resolveDoctorsReqjButton1;
+    private javax.swing.JButton viewRequestedDeviceStatusjButton1;
+    private javax.swing.JTable workRequestJTable;
+    // End of variables declaration//GEN-END:variables
+}
